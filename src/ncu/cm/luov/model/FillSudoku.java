@@ -20,7 +20,10 @@ public class FillSudoku {
         AnalyseSudoku analyseSudoku = new AnalyseSudoku();
         Integer[] num = analyseSudoku.AnalyseSudoku(sudoku);//分析所有格子，将可填入的数值填写进格子的info中，得到每个格子可填数量的表
 
-        Integer index = ArrayUtils.ArrayMin(num, 0);
+        Integer index = ArrayUtils.ArrayMin(num);
+        if (sudoku.getGrids().get(index).getValue().equals(0)) {
+            return false;
+        }
         if (index != null) {
             System.out.print("本次填写第" + index + "格：");
             Grid grid = sudoku.getGrids().get(index);
