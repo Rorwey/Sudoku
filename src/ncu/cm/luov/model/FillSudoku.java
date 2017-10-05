@@ -12,7 +12,7 @@ import java.util.*;
 public class FillSudoku {
     /**
      * 填写数独
-     * 找寻数组表中第一个最小值的
+     * 找寻数组表中第一个最小解空间的格子进行填写
      *
      * @param sudoku 数独
      */
@@ -20,10 +20,10 @@ public class FillSudoku {
         AnalyseSudoku analyseSudoku = new AnalyseSudoku();
         Integer[] num = analyseSudoku.AnalyseSudoku(sudoku);//分析所有格子，将可填入的数值填写进格子的info中，得到每个格子可填数量的表
 
-        Integer index = ArrayUtils.ArrayMin(num);
-        if (sudoku.getGrids().get(index).getValue().equals(0)) {
-            return false;
-        }
+        Integer index = ArrayUtils.ArrayMin(num, 0);
+//        if (!sudoku.getGrids().get(index).isEmpty()) {
+//            return false;
+//        }
         if (index != null) {
             System.out.print("本次填写第" + index + "格：");
             Grid grid = sudoku.getGrids().get(index);
@@ -55,11 +55,11 @@ public class FillSudoku {
 
     /**
      * 显式填写法
-     * 传入数独和数量列表，直接遍历数量列表，若为1则说明只能填一个数，找到填入。
+     * 传入数独和要填写的格子，判断，若该格子的解空间仅有一个，则将这个解填入
      *
      * @param sudoku 数独
      * @param grid   准备填写的格子
-     * @return flag 修改了数量
+     * @return 是否填写成功
      */
     public static boolean ObviousFillSudoku(Grid grid, Sudoku sudoku) {
         if (grid.getInfo().size() == 1) {
@@ -72,9 +72,10 @@ public class FillSudoku {
 
     /**
      * 隐式填写法
-     * 若检查发现，格子值x在行或列或块中能且仅能出现一次，说明x合法
+     * 若检查发现，格子值x在行或列或块中及对应的其他格子的解空间中能且仅能出现一次，说明x合法
      *
      * @param sudoku 数独
+     *               @param  grid 要填写的格子
      * @return 是否填写成功
      */
     public static boolean HideFillGrid(Grid grid, Sudoku sudoku) {
