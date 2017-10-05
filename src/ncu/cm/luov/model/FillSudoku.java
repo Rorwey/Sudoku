@@ -3,6 +3,7 @@ package ncu.cm.luov.model;
 import ncu.cm.luov.entity.Grid;
 import ncu.cm.luov.entity.Sudoku;
 import ncu.cm.luov.utils.ArrayUtils;
+import ncu.cm.luov.utils.CheckUtils;
 
 import java.util.*;
 
@@ -18,14 +19,23 @@ public class FillSudoku {
         AnalyseSudoku analyseSudoku = new AnalyseSudoku();
         Integer[] num = analyseSudoku.AnalyseSudoku(sudoku);//分析所有格子，将可填入的数值填写进格子的info中，得到每个格子可填数量的表
         Integer index = ArrayUtils.ArrayMin(num, 0);
+
         if (index != null) {
+            System.out.println("本次填写第"+index+"格");
             Grid grid = sudoku.getGrids().get(index);
             if (ObviousFillSudoku(grid, sudoku)) {
+                System.out.println("显示填写法填写成功");
+                DoFillSudoku(sudoku);
                 return true;
-            } else if (HideFillGrid(grid, sudoku)) return true;
+            } else if (HideFillGrid(grid, sudoku)) {
+                System.out.println("隐式填写法填写成功");
+                DoFillSudoku(sudoku);
+                return true;
+            }
             else {
                 for (int i = 0; i < grid.getInfo().size(); i++) {
                     SetGrid(grid, grid.getInfo().get(i));
+                    System.out.println("尝试"+grid.getInfo().get(i));
                     if (DoFillSudoku(sudoku))
                         return true;
                     SetGrid(grid, null);
@@ -46,7 +56,9 @@ public class FillSudoku {
      * @return flag 修改了数量
      */
     public static boolean ObviousFillSudoku(Grid grid, Sudoku sudoku) {
-        if (grid.getInfo().size() == 1) return SetGrid(grid, grid.getInfo().get(0));
+        if (grid.getInfo().size() == 1) {
+            return SetGrid(grid, grid.getInfo().get(0));
+        }
         else return false;
     }
 
@@ -125,7 +137,9 @@ public class FillSudoku {
         for (Grid aList : list) {
             if (aList.isEmpty()) {
                 ArrayList<Integer> info = aList.getInfo();
-                tempSet.addAll(info);
+                for (int i = 0; i <info.size(); i++) {
+                    tempSet.add(info.get(i));
+                }
             }
         }
         List<Integer> outList = new ArrayList<>(tempSet);
@@ -143,9 +157,9 @@ public class FillSudoku {
         if (value != null) {
             grid.setValue(value);
             grid.setEmpty(false);
-            ArrayList<Integer> info = grid.getInfo();
-            if (info.remove(value))
-                grid.setInfo(info);
+//            ArrayList<Integer> info = grid.getInfo();
+//            if (info.remove(value))
+//                grid.setInfo(info);
             return true;
         } else {
             grid.setValue(value);
