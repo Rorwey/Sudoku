@@ -4,6 +4,7 @@ import ncu.cm.luov.entity.Sudoku;
 import ncu.cm.luov.utils.FileUtils;
 import ncu.cm.luov.utils.InputUtils;
 
+import javax.sound.midi.Soundbank;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +13,9 @@ import java.util.Map;
 
 public class CreateSudoku {
     public Sudoku ComprehensiveCreateSudoku(){
-        int width = InputUtils.inputInt("请输入要解得数独的最小格数\n如，9*9数独，单位格数为3*3，则输入3");
+//        int width = InputUtils.inputInt("请输入要解得数独的最小格数\n如，9*9数独，单位格数为3*3，则输入3");
+        int width = 3;
+        System.out.println("将填写一个单元为3，总9*9的数独");
         String str = readFile();
         Sudoku sudoku = CreateSudoku(str, width);
         return sudoku;
@@ -23,7 +26,9 @@ public class CreateSudoku {
      * @return 读取后的数据，以字符串形式保存
      */
     private String readFile() {
-        File file = InputUtils.inputFile("请输入文件绝对路径");
+//        File file = InputUtils.inputFile("请输入文件绝对路径");
+        File file = new File("EasySudoku.txt");//临时供测试用
+        System.out.println("读取数独文件：EasySudoku.txt");
         return FileUtils.readTextFromFile(file);
     }
 
@@ -60,6 +65,7 @@ public class CreateSudoku {
         String[] sudoRow = sudo.split("\r\n");//分割为一行
         boolean isEmpty;
         Integer value;
+        Integer flag = 0;
         for (int i = 0; i < width*width; i++) {
             for (int j = 0; j < width*width; j++) {
                Integer temp = Integer.parseInt(String.valueOf(sudoRow[i].toCharArray()[j]));
@@ -70,7 +76,8 @@ public class CreateSudoku {
                     value=null;
                     isEmpty=true;
                 }
-                Grid grid = new Grid(value, isEmpty);
+                flag++;
+                Grid grid = new Grid(value, isEmpty, flag);
                 grids.add(grid);
             }
         }
