@@ -5,6 +5,7 @@ import ncu.cm.luov.entity.Sudoku;
 import ncu.cm.luov.utils.ArrayUtils;
 import ncu.cm.luov.utils.CheckUtils;
 
+import javax.lang.model.element.VariableElement;
 import java.util.*;
 
 @SuppressWarnings("ALL")
@@ -18,24 +19,23 @@ public class FillSudoku {
     public static boolean DoFillSudoku(Sudoku sudoku) {
         AnalyseSudoku analyseSudoku = new AnalyseSudoku();
         Integer[] num = analyseSudoku.AnalyseSudoku(sudoku);//分析所有格子，将可填入的数值填写进格子的info中，得到每个格子可填数量的表
-        Integer index = ArrayUtils.ArrayMin(num, 0);
 
+        Integer index = ArrayUtils.ArrayMin(num, 0);
         if (index != null) {
-            System.out.println("本次填写第"+index+"格");
+            System.out.print("本次填写第" + index + "格：");
             Grid grid = sudoku.getGrids().get(index);
             if (ObviousFillSudoku(grid, sudoku)) {
-                System.out.println("显示填写法填写成功");
+                System.out.println("显式填写法填写成功");
                 DoFillSudoku(sudoku);
                 return true;
             } else if (HideFillGrid(grid, sudoku)) {
                 System.out.println("隐式填写法填写成功");
                 DoFillSudoku(sudoku);
                 return true;
-            }
-            else {
+            } else {
                 for (int i = 0; i < grid.getInfo().size(); i++) {
                     SetGrid(grid, grid.getInfo().get(i));
-                    System.out.println("尝试"+grid.getInfo().get(i));
+                    System.out.println("尝试" + grid.getInfo().get(i));
                     if (DoFillSudoku(sudoku))
                         return true;
                     SetGrid(grid, null);
@@ -43,12 +43,15 @@ public class FillSudoku {
                 return false;
             }
         } else {
-            return true;
+            if (CheckUtils.CheckEndSudokuHas0(sudoku))
+                return false;
+            else
+                return true;
         }
     }
 
     /**
-     * 显示填写法
+     * 显式填写法
      * 传入数独和数量列表，直接遍历数量列表，若为1则说明只能填一个数，找到填入。
      *
      * @param sudoku 数独
@@ -57,9 +60,10 @@ public class FillSudoku {
      */
     public static boolean ObviousFillSudoku(Grid grid, Sudoku sudoku) {
         if (grid.getInfo().size() == 1) {
-            return SetGrid(grid, grid.getInfo().get(0));
-        }
-        else return false;
+            Integer toFill = grid.getInfo().get(0);
+            System.out.println("填写" + toFill);
+            return SetGrid(grid, toFill);
+        } else return false;
     }
 
 
@@ -75,17 +79,20 @@ public class FillSudoku {
             List<Grid> rowList = (List<Grid>) sudoku.getRow().get(grid.getRow());
             Integer rowFlag = CheckGridByHide(rowList);
             if (rowFlag != null) {
+                System.out.println("填写" + rowFlag);
                 return SetGrid(grid, rowFlag);
             } else {
                 List<Grid> colList = (List<Grid>) sudoku.getCol().get(grid.getCol());
                 Integer colFlag = CheckGridByHide(colList);
                 if (colFlag != null) {
+                    System.out.println("填写" + rowFlag);
                     return SetGrid(grid, colFlag);
                 } else {
                     List<Grid> blockList = (List<Grid>) sudoku.getBlock().get(grid.getBlock());
                     Integer blockFlag = CheckGridByHide(blockList);
                     if (blockFlag != null)
-                        return SetGrid(grid, blockFlag);
+                        System.out.println("填写" + rowFlag);
+                    return SetGrid(grid, blockFlag);
                 }
             }
         }
@@ -137,12 +144,14 @@ public class FillSudoku {
         for (Grid aList : list) {
             if (aList.isEmpty()) {
                 ArrayList<Integer> info = aList.getInfo();
-                for (int i = 0; i <info.size(); i++) {
+                for (int i = 0; i < info.size(); i++) {
+//                    if(info.get(i)!=null)
                     tempSet.add(info.get(i));
                 }
             }
         }
-        List<Integer> outList = new ArrayList<>(tempSet);
+        List<Integer> outList = new ArrayList<>();
+        outList.addAll(tempSet);
         return outList;
     }
 
