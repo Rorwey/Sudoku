@@ -13,14 +13,10 @@ public class ArrayUtils {
      */
     public static boolean checkRepeat(int[] array) {
         HashSet<Integer> hashSet = new HashSet<Integer>();
-        for (int i = 0; i < array.length; i++) {
-            hashSet.add(array[i]);
+        for (int anArray : array) {
+            hashSet.add(anArray);
         }
-        if (hashSet.size() == array.length) {
-            return true;
-        } else {
-            return false;
-        }
+        return hashSet.size() == array.length;
     }
 
     /**
@@ -80,7 +76,7 @@ public class ArrayUtils {
     public static <T> Set<T> ArrayUnion(T[] t1, T[] t2) {
         List<T> list1 = Arrays.asList(t1);
         List<T> list2 = Arrays.asList(t2);
-        Set<T> set = new HashSet<T>();
+        Set<T> set = new HashSet<>();
         set.addAll(list1);
         set.addAll(list2);
         return set;
@@ -158,8 +154,14 @@ public class ArrayUtils {
      */
     public static Integer ArrayMin(Integer[] array, Integer num) {
         Integer temp=null;
-        Integer[] tempArr = Arrays.copyOf(array, array.length);
-        ArrayQuickSort(tempArr,0,tempArr.length);
+        ArrayList<Integer> tempArr=new ArrayList<>();
+        for (Integer anArray : array) {
+            if (anArray != null) {
+                tempArr.add(anArray);
+            }
+        }
+        Integer[] objects =IntList2Array(tempArr);
+        ArrayQuickSort(objects,0,tempArr.size()-1);
         for (Integer aTempArr : tempArr) {
             if (aTempArr > num) {
                 temp = aTempArr;
@@ -168,7 +170,7 @@ public class ArrayUtils {
             }
         }
         for (Integer i = 0; i < array.length; i++) {
-            if (array[i].equals(temp)){
+            if (array[i]!=null&&array[i].equals(temp)){
                return i;
             }
         }
@@ -255,8 +257,15 @@ public class ArrayUtils {
      * @param list 要转换的List
      * @return 对应数组
      */
-    public static Object[] IntList2Array(List<Object> list) {
-        Object[] arr = new Object[list.size()];
+//    public static Object[] IntList2Array(List<Object> list) {
+//        Object[] arr = new Object[list.size()];
+//        for (int i = 0; i < list.size(); i++) {
+//            arr[i] = list.get(i);
+//        }
+//        return arr;
+//    }
+    public static Integer[] IntList2Array(List<Integer> list) {
+        Integer[] arr = new Integer[list.size()];
         for (int i = 0; i < list.size(); i++) {
             arr[i] = list.get(i);
         }
