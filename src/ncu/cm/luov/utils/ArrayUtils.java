@@ -1,6 +1,5 @@
 package ncu.cm.luov.utils;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class ArrayUtils {
@@ -137,12 +136,22 @@ public class ArrayUtils {
      * @return 最小值的索引
      */
     public static Integer ArrayMin(Integer[] array) {
-        int minIndex = 0;
-        for (Integer i = 0; i < array.length; i++) {
-            if (array[i] < array[minIndex])
-                minIndex = i;
+        ArrayList<Integer> tempArr = new ArrayList<>();
+        for (Integer anArray : array) {
+            if (anArray != null) {
+                tempArr.add(anArray);
+            }
         }
-        return minIndex;
+        Integer[] objects = IntList2Array(tempArr);
+        ArrayQuickSort(objects, 0, tempArr.size() - 1);
+        for (Integer i = 0; i < array.length; i++) {
+            if (array[i] != null) {
+                if (array[i].equals(objects[0])) {
+                    return i;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -162,21 +171,32 @@ public class ArrayUtils {
         }
         Integer[] objects =IntList2Array(tempArr);
         ArrayQuickSort(objects,0,tempArr.size()-1);
-        for (Integer aTempArr : tempArr) {
-            if (aTempArr > num) {
-                temp = aTempArr;
-            } else {
-                return temp;
-            }
-        }
+        temp = Find1stMin(objects, num);
+        if (temp.equals(num)) return null;
+        else {
         for (Integer i = 0; i < array.length; i++) {
             if (array[i]!=null&&array[i].equals(temp)){
                return i;
             }
         }
+        }
         return null;
     }
 
+    /**
+     * 找到递增数组中第一个大于参照值的最小数
+     *
+     * @param array 待比较数组
+     * @param num   参考值
+     * @return 值
+     */
+    private static Integer Find1stMin(Integer[] array, Integer num) {
+        for (Integer aList : array) {
+            if (num < aList)
+                return aList;
+        }
+        return num;
+    }
     /**
      * 数组的快速排序，从小到大
      * @param arrays 待排序数组
